@@ -5,22 +5,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Unzip Project
-        run: |
-          unzip -o madrasa-management.zip
-          ls -la
-          if [ -d "madrasa-management" ]; then
-            cp -r madrasa-management/*.
-          fi
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - name: Unzip
+        run: unzip -o "*.zip" || true
+      - name: Fix Duplicate Error
+        run: rm -f android/app/src/main/res/values/styles.xml
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
-          channel: 'stable'
       - run: flutter pub get
       - run: flutter build apk --release --no-tree-shake-icons
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: Madrasa-App-APK
           path: build/app/outputs/flutter-apk/app-release.apk
